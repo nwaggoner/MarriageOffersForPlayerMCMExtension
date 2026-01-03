@@ -12,6 +12,7 @@ namespace MarriageOffersForPlayer
     class MarriageOfferCampaignBehaviorPatch
     {
         private static readonly bool PlayerReceivesMarriageOffers = Configs.Instance.PlayerReceivesMarriageOffers;
+		private static readonly bool MarryWhenLord = Configs.Instance.MarriageOnlyWhenLord;
 
         private static MethodInfo CanOfferMarriageForClanMethod = AccessTools.Method(typeof(MarriageOfferCampaignBehavior), "CanOfferMarriageForClan");
         private static MethodInfo ConsiderMarriageForPlayerClanMemberMethod = AccessTools.Method(typeof(MarriageOfferCampaignBehavior), "ConsiderMarriageForPlayerClanMember");
@@ -34,9 +35,16 @@ namespace MarriageOffersForPlayer
                     {
                         bool ConsiderMarriageForPlayerClanMember = (bool)ConsiderMarriageForPlayerClanMemberMethod.Invoke(__instance, new object[] { hero, consideringClan });
 
-                        if (PlayerReceivesMarriageOffers)
+                        if (!MarryWhenLord && PlayerReceivesMarriageOffers)
                         {
                             if (hero.CanMarry() && !____acceptedMarriageOffersThatWaitingForAvailability.ContainsKey(hero) && !ConsiderMarriageForPlayerClanMember)
+                            {
+                                break;
+                            }
+                        }
+						else if (MarryWhenLord && PlayerReceivesMarriageOffers)
+                        {
+                            if (hero.Occupation == Occupation.Lord && hero.CanMarry() && !____acceptedMarriageOffersThatWaitingForAvailability.ContainsKey(hero) && !ConsiderMarriageForPlayerClanMember)
                             {
                                 break;
                             }
