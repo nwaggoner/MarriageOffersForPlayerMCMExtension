@@ -23,11 +23,6 @@ namespace MarriageOffersForPlayer
         public static bool DailyTickClan(Clan consideringClan, MarriageOfferCampaignBehavior __instance, Dictionary<Hero, Hero> ____acceptedMarriageOffersThatWaitingForAvailability)
         {
             
-            if (MarryWhenRealLord && Clan.PlayerClan.Kingdom == null) 
-            {
-                return false;
-            }
-
             bool CanOfferMarriageForClan = (bool)CanOfferMarriageForClanMethod.Invoke(__instance, new object[] { consideringClan });
 
             if (CanOfferMarriageForClan)
@@ -38,6 +33,11 @@ namespace MarriageOffersForPlayer
 
                 if (MBRandom.RandomFloat >= distance / Campaign.Current.Models.MapDistanceModel.GetMaximumDistanceBetweenTwoConnectedSettlements(navigationType) - 0.5f)
                 {
+
+                    if (MarryWhenRealLord && Clan.PlayerClan.Kingdom == null) {
+                        return false;
+                    }
+
                     foreach (Hero hero in Clan.PlayerClan.Heroes)
                     { 
                         bool ConsiderMarriageForPlayerClanMember = (bool)ConsiderMarriageForPlayerClanMemberMethod.Invoke(__instance, new object[] { hero, consideringClan });
