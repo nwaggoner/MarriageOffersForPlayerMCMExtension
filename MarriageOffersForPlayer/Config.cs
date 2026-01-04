@@ -20,7 +20,7 @@ namespace MarriageOffersForPlayer
         [SettingPropertyGroup(HeadingMarriageOffersForPlayer)]
         public bool PlayerReceivesMarriageOffers { get; set; } = true;
 		
-		[SettingPropertyBool(displayName: "For Lords Only", Order = 2, RequireRestart = false, HintText = "Toggles whether or not the player recieves marriage proposals before or after becoming a lord that is part of kingdom.")]
+		[SettingPropertyBool(displayName: "Real Lords Only", Order = 2, RequireRestart = false, HintText = "Toggles whether or not the player clan must be a part of a kingdom before recieving marriage offers.")]
         [SettingPropertyGroup(HeadingMarriageOffersForPlayer)]
         public bool MarriageOnlyWhenLord { get; set; } = false;
     }

@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using Bannerlord.ButterLib.ObjectSystem.Extensions;
+using HarmonyLib;
 using System.Collections.Generic;
 using System.Reflection;
 using TaleWorlds.CampaignSystem;
@@ -12,7 +13,7 @@ namespace MarriageOffersForPlayer
     class MarriageOfferCampaignBehaviorPatch
     {
         private static readonly bool PlayerReceivesMarriageOffers = Configs.Instance.PlayerReceivesMarriageOffers;
-		private static readonly bool MarryWhenLord = Configs.Instance.MarriageOnlyWhenLord;
+		private static readonly bool MarryWhenRealLord = Configs.Instance.MarriageOnlyWhenLord;
 
         private static MethodInfo CanOfferMarriageForClanMethod = AccessTools.Method(typeof(MarriageOfferCampaignBehavior), "CanOfferMarriageForClan");
         private static MethodInfo ConsiderMarriageForPlayerClanMemberMethod = AccessTools.Method(typeof(MarriageOfferCampaignBehavior), "ConsiderMarriageForPlayerClanMember");
@@ -21,6 +22,12 @@ namespace MarriageOffersForPlayer
         [HarmonyPatch("DailyTickClan")]
         public static bool DailyTickClan(Clan consideringClan, MarriageOfferCampaignBehavior __instance, Dictionary<Hero, Hero> ____acceptedMarriageOffersThatWaitingForAvailability)
         {
+            
+            if (MarryWhenRealLord && Clan.PlayerClan.Kingdom == null) 
+            {
+                return false;
+            }
+
             bool CanOfferMarriageForClan = (bool)CanOfferMarriageForClanMethod.Invoke(__instance, new object[] { consideringClan });
 
             if (CanOfferMarriageForClan)
@@ -32,19 +39,12 @@ namespace MarriageOffersForPlayer
                 if (MBRandom.RandomFloat >= distance / Campaign.Current.Models.MapDistanceModel.GetMaximumDistanceBetweenTwoConnectedSettlements(navigationType) - 0.5f)
                 {
                     foreach (Hero hero in Clan.PlayerClan.Heroes)
-                    {
+                    { 
                         bool ConsiderMarriageForPlayerClanMember = (bool)ConsiderMarriageForPlayerClanMemberMethod.Invoke(__instance, new object[] { hero, consideringClan });
-
-                        if (!MarryWhenLord && PlayerReceivesMarriageOffers)
+                      
+                        if (PlayerReceivesMarriageOffers)
                         {
-                            if (hero.CanMarry() && !____acceptedMarriageOffersThatWaitingForAvailability.ContainsKey(hero) && !ConsiderMarriageForPlayerClanMember)
-                            {
-                                break;
-                            }
-                        }
-						else if (MarryWhenLord && PlayerReceivesMarriageOffers)
-                        {
-                            if (hero.Occupation == Occupation.Lord && hero.CanMarry() && !____acceptedMarriageOffersThatWaitingForAvailability.ContainsKey(hero) && !ConsiderMarriageForPlayerClanMember)
+                            if (hero.CanMarry() && !____acceptedMarriageOffersThatWaitingForAvailability.ContainsKey(hero) && !ConsiderMarriageForPlayerClanMember) 
                             {
                                 break;
                             }
