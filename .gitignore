@@ -366,4 +366,5 @@ FodyWeavers.xsd
 
 # Folders for debugging/building DLLs
 obj/
-!MarriageOffersForPlayer/bin/Win64_Shipping_Client/
+!MarriageOffersLordsOnly/bin/
+MarriageOffersLordsOnly/bin/Win64_Shipping_Debug/
