@@ -361,3 +361,9 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+
+
+# Folders for debugging/building DLLs
+obj/
+!MarriageOffersForPlayer/bin/Win64_Shipping_Client/
